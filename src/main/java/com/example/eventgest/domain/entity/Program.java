@@ -1,4 +1,4 @@
-package com.example.Eventgest.domain.entity;
+package com.example.eventgest.domain.entity;
 
 
 import jakarta.persistence.*;

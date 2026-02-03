@@ -1,9 +1,6 @@
-package com.example.Eventgest.domain.entity;
+package com.example.eventgest.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +46,11 @@ public class Event {
     @Column(name="maxicapacity",nullable = false)
     private Integer maxicapacity;
 
+// usuario
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User creador;
 
 }
 

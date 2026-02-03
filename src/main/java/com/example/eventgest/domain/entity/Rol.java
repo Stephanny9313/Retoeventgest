@@ -1,13 +1,13 @@
-package com.example.Eventgest.domain.entity;
+package com.example.eventgest.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -23,5 +23,12 @@ public class Rol {
 
     @Column(name = "roltype", nullable = false, length = 50)
     private String roltype;
+
+    //user
+    @OneToMany(mappedBy = "rol")
+    private List<User> usuarios = new ArrayList<>();
+
+
+
 }
 

@@ -1,10 +1,7 @@
-package com.example.Eventgest.domain.entity;
+package com.example.eventgest.domain.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +13,7 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-@Data
+@Entity
 @Table(name="audits")
 public class Audit {
     @Id
@@ -36,6 +33,8 @@ public class Audit {
     @Column(name = "description", nullable = false,length = 200)
     private String description;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

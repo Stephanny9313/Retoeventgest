@@ -1,17 +1,17 @@
-package com.example.Eventgest.domain.entity;
+package com.example.eventgest.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
-@Data
+@Entity
 @Table(name="users")
 public class User {
     @Id
@@ -43,6 +43,26 @@ public class User {
     @Column(nullable = false)
     private Integer maxicapacity;
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Audit> audits = new ArrayList<>();
+
+    //rol
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "rol_id", nullable = false)
+    private Rol rol;
+
+    //event
+    @OneToMany(mappedBy = "event")
+    private List<Event> events = new ArrayList<>();
+
+    //typeevent
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "eventtype_id", nullable = false)
+    private Eventtype eventtype;
 
 
 }
