@@ -24,4 +24,9 @@ public class Program {
     @Column(name="name",nullable = false,length = 20)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "program_id", nullable = false)
+    private Program program;
+
+
 }

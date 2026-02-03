@@ -23,6 +23,10 @@ public class Rol {
     @Column(name = "rol_type", nullable = false, unique = true, length = 50)
     private String rolType;
 
+    @OneToMany(mappedBy = "rol")
+    private List<Event> rol;
+
+
 
 }
 

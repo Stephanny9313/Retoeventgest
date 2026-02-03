@@ -1,9 +1,6 @@
 package com.example.eventgest.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,5 +28,14 @@ public class ParametHisto {
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "parameter_id")
+    private Parameter parameter;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Parameter user;
+
 
 }

@@ -31,6 +31,12 @@ public class Audit {
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
+
 
 }
 

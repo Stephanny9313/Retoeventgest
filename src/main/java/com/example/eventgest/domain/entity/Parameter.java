@@ -1,10 +1,7 @@
 package com.example.eventgest.domain.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +30,15 @@ public class Parameter {
 
     @Column(name = "modifiable", nullable = false)
     private String modifiable;
+
+    @ManyToOne
+    @JoinColumn(name = "parament_id", nullable = false)
+    private EventType parameter;
+
+
+
+
+
 
 
 }

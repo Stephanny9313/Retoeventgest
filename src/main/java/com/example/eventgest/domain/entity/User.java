@@ -41,7 +41,11 @@ public class User {
     @Column(name = "max_capacity")
     private Integer maxCapacity;
 
+    @OneToMany(mappedBy = "user")
+    private List<Event> events;
 
+    @OneToMany(mappedBy = "audit")
+    private List<Audit> audits;
 
 
 }

@@ -1,9 +1,9 @@
 package com.example.eventgest.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.Id;
+
+import java.util.List;
 
 public class Participant {
 
@@ -13,8 +13,9 @@ public class Participant {
     private Long id;
 
     @Column(name="name",nullable = false)
-    private String code;
+    private String name;
 
+    @EnumeratedValue
     @Column(name="documenttype",nullable = false,length = 20)
     private Enum documentType ;
 
@@ -26,4 +27,10 @@ public class Participant {
 
     @Column(name="phone",nullable=false)
     private Integer phone;
+
+    @OneToMany(mappedBy = "registration")
+    private List<Event> registrations;
+
+
 }
+
