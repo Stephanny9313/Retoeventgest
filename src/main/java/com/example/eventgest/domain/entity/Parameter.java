@@ -29,7 +29,7 @@ public class Parameter {
     private String Value;
 
     @Column(name = "type", nullable = false)
-    private Enum type;
+    private String type;
 
     @Column(name = "modifiable", nullable = false)
     private String modifiable;

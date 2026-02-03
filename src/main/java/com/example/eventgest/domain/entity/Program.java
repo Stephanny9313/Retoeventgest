@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
-@Data
+@Entity
 @Table(name="programs")
 
 public class Program {

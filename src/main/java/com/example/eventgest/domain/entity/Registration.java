@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@Data
+@Entity
 @Table(name="registrations")
 
 public class Registration {

@@ -1,68 +1,48 @@
 package com.example.eventgest.domain.entity;
 
+import com.example.eventgest.domain.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long id;
 
-
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(name="last_name",nullable = false, length = 200)
-    private String last_name;
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
 
-    @Column(name = "email", nullable = false,length=200)
+    @Column(nullable = false, unique = true, length = 200)
     private String email;
 
-    @Column(name = "password", nullable = false,length = 10)
-    private String startTime;
-
-    @Column(name = "phone", nullable = false)
-    private Integer phone;
-
-
-
-    @Column(nullable = false,length = 10)
-    private Enum status;
+    @Column(nullable = false, length = 255)
+    private String password;
 
     @Column(nullable = false)
-    private Integer maxicapacity;
+    private Integer phone;
 
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Audit> audits = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserStatus status;
 
-    //rol
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "rol_id", nullable = false)
-    private Rol rol;
+    @Column(name = "max_capacity")
+    private Integer maxCapacity;
 
-    //event
-    @OneToMany(mappedBy = "event")
-    private List<Event> events = new ArrayList<>();
 
-    //typeevent
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "eventtype_id", nullable = false)
-    private Eventtype eventtype;
 
 
 }
+
