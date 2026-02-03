@@ -1,4 +1,4 @@
-package com.example.eventgest.domain.entity;
+package com.example.eventgest.persistence.entity;
 
 import com.example.eventgest.domain.enums.EventStatus;
 import jakarta.persistence.*;
@@ -7,8 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
