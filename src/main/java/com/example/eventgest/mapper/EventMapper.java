@@ -1,4 +1,4 @@
-package com.example.eventgest.domain.mapper;
+package com.example.eventgest.mapper;
 
 
 import com.example.eventgest.domain.dto.EventDTO;
