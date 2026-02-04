@@ -1,6 +1,7 @@
 package com.example.eventgest.domain.repository;
 
-import jdk.jfr.Event;
+import com.example.eventgest.persistence.entity.Event;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

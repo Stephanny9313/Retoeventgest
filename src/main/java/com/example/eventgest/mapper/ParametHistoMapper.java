@@ -19,7 +19,7 @@ public class ParametHistoMapper {
         }
 
         public ParametHisto toEntity(ParametHistoDTO dto) {
-            return modelMapper.map(dto, ParametHisto.class);
+            return modelMapper.map(dto, ParametHisto .class);
         }
     }
-}
+

@@ -7,11 +7,13 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import com.example.eventgest.persistence.entity.Event;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "events")
+@Getter
+@Setter
 public class Event {
 
     @Id
@@ -47,10 +49,24 @@ public class Event {
     @Column(name = "max_capacity", nullable = false)
     private Integer maxCapacity;
 
-    @ManyToOne
+    // MUCHOS eventos pertenecen a UN usuario
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //  Un evento tiene muchas inscripciones
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Registration> registrations;
+
+    //program
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id", nullable = false)
+    private Program program;
+
+    //
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "eventtype_id", nullable = false)
+    private EventType eventType;
 }
 
 

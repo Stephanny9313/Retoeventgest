@@ -5,12 +5,15 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+
+import java.util.List;
 
 
 @Setter
 @Getter
 @Data
+@Entity
 @Table(name="parameters")
 
 public class Parameter {
@@ -28,12 +31,8 @@ public class Parameter {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "modifiable", nullable = false)
-    private String modifiable;
-
-    @ManyToOne
-    @JoinColumn(name = "parament_id", nullable = false)
-    private EventType parameter;
+    @OneToMany(mappedBy = "parameter")
+    private List<ParametHisto> parametHisto;
 
 
 

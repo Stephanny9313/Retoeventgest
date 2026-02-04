@@ -24,4 +24,4 @@ public class ParticipantMapper {
             return modelMapper.map(dto, Participant.class);
         }
     }
-}
+

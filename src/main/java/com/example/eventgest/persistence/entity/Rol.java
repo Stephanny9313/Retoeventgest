@@ -2,16 +2,18 @@ package com.example.eventgest.persistence.entity;
 
 
 
+import com.example.eventgest.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "roles")
+@Getter
+@Setter
 public class Rol {
 
     @Id
@@ -19,15 +21,20 @@ public class Rol {
     @Column(name = "rol_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "rol_type", nullable = false, unique = true, length = 50)
-    private String rolType;
+    private UserStatus rolType;
 
-    @OneToMany(mappedBy = "rol")
-    private List<Event> rol;
-
-
-
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
+    private List<User> users = new ArrayList<>();
 }
+
+
+
+
+
+
+
 
 
 

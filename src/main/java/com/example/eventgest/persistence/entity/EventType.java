@@ -20,9 +20,8 @@ public class EventType {
     @Column(name = "type_name", nullable = false, length = 50, unique = true)
     private String typeName;
 
-    @ManyToOne
-    @JoinColumn(name = "event_type_id", nullable = false)
-    private EventType eventType;
+
+
 
 }
 

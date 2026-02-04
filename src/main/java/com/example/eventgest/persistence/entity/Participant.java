@@ -1,11 +1,20 @@
 package com.example.eventgest.persistence.entity;
 
+import com.example.eventgest.domain.enums.DocumentType;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.persistence.Id;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class Participant {
+@Getter
+@Setter
+@Entity
+@Table(name= "participants")
+public class    Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +26,7 @@ public class Participant {
 
     @EnumeratedValue
     @Column(name="documenttype",nullable = false,length = 20)
-    private Enum documentType ;
+    private DocumentType documentType ;
 
     @Column(name="documentnumber",nullable = false)
     private Integer documentNumber;
@@ -28,8 +37,9 @@ public class Participant {
     @Column(name="phone",nullable=false)
     private Integer phone;
 
-    @OneToMany(mappedBy = "registration")
-    private List<Event> registrations;
+
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Registration> registrations = new ArrayList<>();
 
 
 }

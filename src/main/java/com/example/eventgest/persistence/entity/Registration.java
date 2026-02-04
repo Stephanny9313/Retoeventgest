@@ -1,6 +1,7 @@
 package com.example.eventgest.persistence.entity;
 
 
+import com.example.eventgest.domain.enums.AttendanceStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,25 +16,23 @@ import java.util.Date;
 public class Registration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="registration_id",nullable = false)
+    @Column(name = "registration_id", nullable = false)
     private Long id;
 
-    @Column(name="registration_date",nullable = false)
-    private Date resgistrationDate;
+    @Column(name = "registration_date", nullable = false)
+    private Date registrationDate;
 
-    @Column(name="attendace",nullable = false)
-    private Enum attendance;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "attendance", nullable = false, length = 20)
+    private AttendanceStatus attendance;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "participant_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "participant_id", nullable = false)
     private Participant participant;
-
-
-
 
 
 }

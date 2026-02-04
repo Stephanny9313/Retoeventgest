@@ -2,6 +2,7 @@ package com.example.eventgest.mapper;
 
 import com.example.eventgest.domain.dto.UserDTO;
 import com.example.eventgest.persistence.entity.User;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,11 +16,13 @@ public class UserMapper {
         }
 
         public UserDTO toDto(User user) {
+
             return modelMapper.map(user, UserDTO.class);
         }
 
         public User toEntity(UserDTO dto) {
-            return modelMapper.map(dto, UserDTO.class);
+
+            return modelMapper.map(dto, User.class);
         }
     }
-}
+

@@ -1,41 +1,45 @@
 package com.example.eventgest.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+
+
 
 import java.time.LocalDate;
 
-@Data
 @Getter
 @Setter
-@Table(name="paramet_history")
-
-public class ParametHisto {
+@Entity
+@Table(name = "paramethistos")
+public class ParametHisto{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "parameter_id", nullable = false)
+    @Column(name = "paramethisto_id")
     private Long id;
 
     @Column(name = "previous_value", nullable = false, length = 50)
     private String previousValue;
 
-    @Column(name="new_value",nullable = false, length = 200)
+    @Column(name = "new_value", nullable = false, length = 200)
     private String newValue;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "parameter_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "parameter_id", nullable = false)
     private Parameter parameter;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Parameter user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 
 
 }
+
+

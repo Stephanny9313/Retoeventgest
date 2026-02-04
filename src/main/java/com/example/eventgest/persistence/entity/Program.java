@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -23,9 +26,16 @@ public class Program {
     @Column(name="name",nullable = false,length = 20)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "program_id", nullable = false)
-    private Program program;
+
+
+    @OneToMany(
+            mappedBy = "program",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Event> events = new ArrayList<>();
+
+
 
 
 }

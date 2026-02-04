@@ -31,9 +31,11 @@ public class Audit {
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
-    @ManyToOne
+    //user
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
 
 
 
