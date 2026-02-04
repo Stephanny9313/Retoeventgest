@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,16 @@ public class Program {
     @Column(name="name",nullable = false,length = 20)
     private String name;
 
+    @Column (name="staryear",nullable = false)
+    private LocalDate staryear;
+
+    @Column(name="endyear",nullable = false)
+    private LocalDate endyear;
+
+    @EnumeratedValue
+    @Column(name="status",nullable = false)
+    private Enum status;
+
 
 
     @OneToMany(
@@ -34,7 +45,6 @@ public class Program {
             orphanRemoval = true
     )
     private List<Event> events = new ArrayList<>();
-
 
 
 

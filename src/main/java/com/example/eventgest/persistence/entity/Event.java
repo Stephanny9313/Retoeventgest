@@ -10,10 +10,12 @@ import java.time.LocalTime;
 import java.util.List;
 import com.example.eventgest.persistence.entity.Event;
 
-@Entity
-@Table(name = "events")
+
 @Getter
 @Setter
+@Entity
+@Table(name = "events")
+
 public class Event {
 
     @Id
@@ -67,6 +69,8 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "eventtype_id", nullable = false)
     private EventType eventType;
+
+
 }
 
 
