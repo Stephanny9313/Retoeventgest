@@ -6,6 +6,7 @@ import com.example.eventgest.domain.service.Impl.AuditServiceImpl;
 import com.example.eventgest.persistence.entity.*;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +27,16 @@ public class EventServiceImpl implements EventService {
     private final ProgramRepository programRepository;
     private final EventTypeRepository eventTypeRepository;
     private final AuditServiceImpl auditService;
+    private final  AuditRepository auditRepository;
 
     public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository, ProgramRepository programRepository,
-                            EventTypeRepository eventTypeRepository, AuditServiceImpl auditService) {
+                            EventTypeRepository eventTypeRepository, AuditServiceImpl auditService, AuditRepository auditRepository, AuditRepository auditRepository1) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.programRepository = programRepository;
         this.eventTypeRepository = eventTypeRepository;
         this.auditService = auditService;
+        this.auditRepository = auditRepository;
     }
 
     @Override
@@ -77,8 +80,9 @@ public class EventServiceImpl implements EventService {
         event.setEventType(eventType);
 
         Event saved = eventRepository.save(event);
-
-        public void registerAction (Long user_Id, String action, String description){
+        return saved;
+    }
+        public void registerAction(Long user_Id,String action,String description){
             if (user_Id == null) {
                 throw new IllegalArgumentException("UserId cannot be null for auditing");
             }
@@ -87,16 +91,17 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new EntityNotFoundException("User not found for auditing"));
 
             Audit audit = new Audit();
-            audit.setUser(user);
+            audit.setUser(users);
             audit.getAction();
             audit.getDescription();
             audit.setDate(LocalDate.now());
             audit.setTime(LocalTime.now());
             audit.setCreatedAt(LocalDateTime.now());
 
+
             auditRepository.save(audit);
         }
-    }
+
 
 
     @Override
@@ -134,8 +139,6 @@ public class EventServiceImpl implements EventService {
 
         Event updated = eventRepository.save(event);
 
-
-
         return updated;
     }
 
@@ -170,10 +173,10 @@ public class EventServiceImpl implements EventService {
         if (!event.getUser().getId().equals(user_Id)) {
             throw new IllegalArgumentException("User cannot publish this event");
         }
-        if (!event.getEventName().getId().equals(user_Id)){
+        if (!event.getEventName().getBytes().equals(user_Id)){
             throw new IllegalArgumentException("debe tener un nombre");
         }
-        if(!event.getLocation().getId().equals(user_Id)){
+        if(!event.getLocation().getBytes().equals(user_Id)){
             throw  new IllegalArgumentException("debe tener campo de ubicacion ");
 
         }
@@ -194,7 +197,7 @@ public class EventServiceImpl implements EventService {
             throw new IllegalArgumentException("User cannot close this event");
         }
 
-        if(!event.getEndTime().getId().equals(user_Id)){
+        if(!event.getEndTime().getHour()){
             throw new IllegalArgumentException("hora que sale  hora ");
         }
 
