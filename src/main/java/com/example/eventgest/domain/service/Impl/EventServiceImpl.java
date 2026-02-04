@@ -180,6 +180,15 @@ public class EventServiceImpl implements EventService {
             throw  new IllegalArgumentException("debe tener campo de ubicacion ");
 
         }
+        if (!event.getEndTime().equals(user_Id)){
+            throw new IllegalArgumentException("Debe tener la hora final evento");
+        }
+        if (!event.getDate().equals(user_Id)){
+            throw new IllegalArgumentException("debe tener una fecha el evento");
+        }
+        if (!event.getMaxCapacity().equals(user_Id)){
+            throw new IllegalArgumentException("debe decir la capacidad  maxima ");
+        }
 
 
         event.setStatus(com.example.eventgest.domain.enums.EventStatus.PUBLISHED);
@@ -197,9 +206,8 @@ public class EventServiceImpl implements EventService {
             throw new IllegalArgumentException("User cannot close this event");
         }
 
-        if(!event.getEndTime().getHour()){
-            throw new IllegalArgumentException("hora que sale  hora ");
-        }
+
+
 
         event.setStatus(com.example.eventgest.domain.enums.EventStatus.CLOSED);
         Event updated = eventRepository.save(event);
@@ -220,7 +228,7 @@ public class EventServiceImpl implements EventService {
 
         Registration registration = new Registration();
         registration.setEvent(event);
-        registration.setUser(user);
+
 
         event.getRegistrations().add(registration);
         event.setGuestCount(event.getGuestCount() + 1);
