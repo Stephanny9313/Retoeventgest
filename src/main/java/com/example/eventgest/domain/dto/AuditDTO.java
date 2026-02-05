@@ -13,4 +13,6 @@ public class AuditDTO {
     private LocalDate date;
     private LocalTime time;
     private String description;
+    private Long userId;
+
 }

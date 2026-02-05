@@ -15,11 +15,27 @@ public class EventMapper {
         this.modelMapper = modelMapper;
     }
 
+    // Convierte entidad a DTO
     public EventDTO toDto(Event event) {
-        return modelMapper.map(event, EventDTO.class);
+        if (event == null) return null;
+
+        EventDTO dto = modelMapper.map(event, EventDTO.class);
+
+        // Asignar IDs de relaciones
+        if (event.getUser() != null) dto.setUserId(event.getUser().getId());
+        if (event.getProgram() != null) dto.setProgramId(event.getProgram().getId());
+        if (event.getEventType() != null) dto.setEventTypeId(event.getEventType().getId());
+
+        return dto;
     }
 
-    public Event toEntity(EventDTO eventDTO) {
-        return modelMapper.map(eventDTO, Event.class);
+    // Convierte DTO a entidad
+    public Event toEntity(EventDTO dto) {
+        if (dto == null) return null;
+
+        Event event = modelMapper.map(dto, Event.class);
+
+        // NOTA: Relaciones (User, Program, EventType) se asignan en el ServiceImpl usando sus IDs
+        return event;
     }
 }
