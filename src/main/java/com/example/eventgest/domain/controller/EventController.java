@@ -2,8 +2,8 @@ package com.example.eventgest.domain.controller;
 
 
 import com.example.eventgest.domain.dto.EventDTO;
-import com.example.eventgest.domain.service.service.AuditService;
-import com.example.eventgest.domain.service.service.EventService;
+import com.example.eventgest.domain.service.Impl.AuditService;
+import com.example.eventgest.domain.service.Impl.EventService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;

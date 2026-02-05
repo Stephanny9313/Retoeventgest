@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "paramethistos")
-public class ParametHisto{
+public class ParametHistos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

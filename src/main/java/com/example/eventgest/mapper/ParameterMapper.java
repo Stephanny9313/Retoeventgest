@@ -22,6 +22,8 @@ public class ParameterMapper {
         public Parameter toEntity(ParameterDTO dto) {
             return modelMapper.map(dto, Parameter.class);
         }
+
+
     }
 
 

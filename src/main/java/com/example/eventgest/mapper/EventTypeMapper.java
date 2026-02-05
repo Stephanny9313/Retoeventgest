@@ -20,6 +20,12 @@ public class EventTypeMapper {
     public EventType toEntity(EventTypeDTO dto) {
         return modelMapper.map(dto, EventType.class);
     }
+
+    public Long toId(EventType eventType) {
+        if (eventType == null) return null;
+        return eventType.getId();
+    }
+
 }
 
 

@@ -4,7 +4,6 @@ package com.example.eventgest.domain.service.Impl;
 import com.example.eventgest.domain.dto.EventDTO;
 import com.example.eventgest.domain.enums.EventStatus;
 import com.example.eventgest.EventSpecification;
-import com.example.eventgest.domain.service.service.EventService;
 import com.example.eventgest.persistence.entity.Event;
 import com.example.eventgest.domain.repository.EventRepository;
 import org.modelmapper.ModelMapper;

@@ -1,7 +1,7 @@
 package com.example.eventgest.mapper;
 
 import com.example.eventgest.domain.dto.ParametHistoDTO;
-import com.example.eventgest.persistence.entity.ParametHisto;
+import com.example.eventgest.persistence.entity.ParametHistos;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +14,12 @@ public class ParametHistoMapper {
             this.modelMapper = modelMapper;
         }
 
-        public ParametHistoDTO toDto(ParametHisto parametHisto) {
+        public ParametHistoDTO toDto(ParametHistos parametHisto) {
             return modelMapper.map(parametHisto, ParametHistoDTO.class);
         }
 
-        public ParametHisto toEntity(ParametHistoDTO dto) {
-            return modelMapper.map(dto, ParametHisto .class);
+        public ParametHistos toEntity(ParametHistoDTO dto) {
+            return modelMapper.map(dto, ParametHistos.class);
         }
     }
 

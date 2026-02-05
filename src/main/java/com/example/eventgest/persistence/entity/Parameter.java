@@ -28,11 +28,14 @@ public class Parameter {
     @Column(name="value",nullable = false, length = 200)
     private String Value;
 
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+
     @Column(name = "type", nullable = false)
     private String type;
 
     @OneToMany(mappedBy = "parameter")
-    private List<ParametHisto> parametHisto;
+    private List<ParametHistos> parametHisto;
 
 
 

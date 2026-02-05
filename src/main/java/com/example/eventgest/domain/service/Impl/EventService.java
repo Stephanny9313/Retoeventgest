@@ -1,15 +1,12 @@
-package com.example.eventgest.domain.service.service;
+package com.example.eventgest.domain.service.Impl;
 
 
 
 import com.example.eventgest.domain.dto.EventDTO;
-import com.example.eventgest.persistence.entity.Event;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Pageable;
 import java.time.LocalDate;
-import java.util.List;
 
 public interface EventService {
     EventDTO createEvent(EventDTO dto);

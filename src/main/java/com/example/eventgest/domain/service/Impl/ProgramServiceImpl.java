@@ -13,4 +13,20 @@ public class ProgramServiceImpl {
         this.programRepository = programRepository;
         this.eventRepository = eventRepository;
     }
+
+        public boolean isProgramInUse(Long programId) {
+            return eventRepository.existsByProgramId(programId);
+        }
+
+        public void deleteProgram(Long id) {
+            if (isProgramInUse(id)) {
+                throw new IllegalStateException("Cannot delete program because it is in use by an event.");
+            }
+            programRepository.deleteById(id);
+        }
+
+
+
+
+
 }

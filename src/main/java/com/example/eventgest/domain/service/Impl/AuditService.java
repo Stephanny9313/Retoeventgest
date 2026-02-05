@@ -1,4 +1,4 @@
-package com.example.eventgest.domain.service.service;
+package com.example.eventgest.domain.service.Impl;
 
 import com.example.eventgest.domain.dto.AuditDTO;
 

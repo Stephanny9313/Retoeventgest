@@ -48,7 +48,7 @@ public class User {
 
     // User
     @OneToMany(mappedBy = "user")
-    private List<ParametHisto> parametHistos;
+    private List<ParametHistos> parametHistos;
     //rol
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rol_id", nullable = false)
