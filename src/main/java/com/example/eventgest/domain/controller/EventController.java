@@ -25,9 +25,6 @@ public class EventController {
         this.auditService = auditService;
     }
 
-    // ================================
-    // LISTAR CON FILTROS Y PAGINACIÓN
-    // ================================
     @GetMapping
     public Page<EventDTO> list(
             @RequestParam(required = false) String status,
@@ -40,17 +37,13 @@ public class EventController {
         return eventService.findFiltered(status, programId, dateFrom, dateTo, PageRequest.of(page, size));
     }
 
-    // ================================
-    // OBTENER POR ID
-    // ================================
+
     @GetMapping("/{id}")
     public EventDTO get(@PathVariable Long id) {
         return eventService.findById(id);
     }
 
-    // ================================
-    // CREAR EVENTO
-    // ================================
+
     @PostMapping
     public EventDTO create(@RequestBody EventDTO dto, @RequestParam Long userId) {
         EventDTO created = eventService.createEvent(dto);
@@ -58,9 +51,7 @@ public class EventController {
         return created;
     }
 
-    // ================================
-    // ACTUALIZAR EVENTO
-    // ================================
+
     @PutMapping("/{id}")
     public EventDTO update(@PathVariable Long id, @RequestBody EventDTO dto, @RequestParam Long userId) {
         EventDTO updated = eventService.updateEvent(id, dto);
@@ -68,9 +59,7 @@ public class EventController {
         return updated;
     }
 
-    // ================================
-    // PUBLICAR EVENTO
-    // ================================
+
     @PatchMapping("/{id}/publish")
     public EventDTO publish(@PathVariable Long id, @RequestParam Long userId) {
         EventDTO published = eventService.publish(id);
@@ -78,9 +67,7 @@ public class EventController {
         return published;
     }
 
-    // ================================
-    // CERRAR EVENTO
-    // ================================
+
     @PatchMapping("/{id}/close")
     public EventDTO close(@PathVariable Long id, @RequestParam Long userId) {
         EventDTO closed = eventService.close(id);
