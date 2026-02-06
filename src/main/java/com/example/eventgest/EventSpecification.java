@@ -1,46 +1,56 @@
 package com.example.eventgest;
 
-import com.example.eventgest.domain.enums.EventStatus;
 import com.example.eventgest.persistence.entity.Event;
-import jakarta.persistence.criteria.Predicate;
+import com.example.eventgest.domain.enums.EventStatus;
 import org.springframework.data.jpa.domain.Specification;
 
-
+import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventSpecification {
 
-    public static Specification<Event> filter(String status, Long programId, LocalDate dateFrom, LocalDate dateTo) {
+    public static Specification<Event> filter(
+            String status,
+            Long programId,
+            LocalDate dateFrom,
+            LocalDate dateTo
+    ) {
+
         return (root, query, cb) -> {
 
-            Predicate predicate = cb.conjunction();
+            List<Predicate> predicates = new ArrayList<>();
 
-            // Filtrar por estado
-            if (status != null && !status.isEmpty()) {
-                try {
-                    EventStatus eventStatus = EventStatus.valueOf(status.toUpperCase());
-                    predicate = cb.and(predicate, cb.equal(root.get("status").as(EventStatus.class), eventStatus));
-                } catch (IllegalArgumentException e) {
-                    // Ignorar si el estado es inválido
-                }
+            // Estado del evento
+            if (status != null && !status.isBlank()) {
+                predicates.add(
+                        cb.equal(root.get("status"), EventStatus.valueOf(status))
+                );
             }
 
-            // Filtrar por programa
+            // Programa
             if (programId != null) {
-                predicate = cb.and(predicate, cb.equal(root.get("program").get("id"), programId));
+                predicates.add(
+                        cb.equal(root.get("program").get("id"), programId)
+                );
             }
 
-            // Filtrar por fecha desde
+            // Fecha inicio desde
             if (dateFrom != null) {
-                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("date").as(LocalDate.class), dateFrom));
+                predicates.add(
+                        cb.greaterThanOrEqualTo(root.get("startAt"), dateFrom.atStartOfDay())
+                );
             }
 
-            // Filtrar por fecha hasta
+            // Fecha fin hasta
             if (dateTo != null) {
-                predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("date").as(LocalDate.class), dateTo));
+                predicates.add(
+                        cb.lessThanOrEqualTo(root.get("endAt"), dateTo.atTime(23, 59, 59))
+                );
             }
 
-            return predicate;
+            return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 }

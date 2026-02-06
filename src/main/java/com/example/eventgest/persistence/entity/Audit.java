@@ -9,40 +9,41 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "audits")
+@Getter
+@Setter
 public class Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "audit_id", nullable = false)
     private Long id;
 
-    @Column(name = "action", nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String action;
 
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @Column(nullable = false, length = 50)
+    private String entity;
 
-    @Column(name = "time", nullable = false)
-    private LocalTime time;
+    @Column(name = "entity_id")
+    private Long entityId;
 
-    @Column(name = "description", nullable = false, length = 200)
+
+    @Column(nullable = false, length = 200)
     private String description;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private LocalTime time;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    //user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-
-
-
 }
 
 

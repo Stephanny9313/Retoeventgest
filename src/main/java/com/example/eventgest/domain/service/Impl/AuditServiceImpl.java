@@ -1,12 +1,11 @@
 package com.example.eventgest.domain.service.Impl;
 
 import com.example.eventgest.domain.dto.AuditDTO;
-import com.example.eventgest.mapper.AuditMapper;
+import com.example.eventgest.domain.repository.AuditRepository;
+import com.example.eventgest.domain.repository.UserRepository;
 import com.example.eventgest.domain.service.Impl.AuditService;
 import com.example.eventgest.persistence.entity.Audit;
 import com.example.eventgest.persistence.entity.User;
-import com.example.eventgest.domain.repository.AuditRepository;
-import com.example.eventgest.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,40 +21,30 @@ public class AuditServiceImpl implements AuditService {
 
     private final AuditRepository auditRepository;
     private final UserRepository userRepository;
-    private final AuditMapper auditMapper;
 
     public AuditServiceImpl(AuditRepository auditRepository,
-                            UserRepository userRepository,
-                            AuditMapper auditMapper) {
+                            UserRepository userRepository) {
         this.auditRepository = auditRepository;
         this.userRepository = userRepository;
-        this.auditMapper = auditMapper;
     }
 
-    // Implementación usando DTO directamente
+    // ======================================================
+    // REGISTRO CENTRAL DE AUDITORÍA
+    // ======================================================
     @Override
-    public AuditDTO saveAudit(AuditDTO auditDTO) {
-        User user = userRepository.findById(auditDTO.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    public void log(Long userId,
+                    String action,
+                    String entity,
+                    Long entityId,
+                    String description) {
 
-        Audit audit = auditMapper.toEntity(auditDTO);
-        audit.setUser(user);
-        audit.setDate(LocalDate.now());
-        audit.setTime(LocalTime.now());
-        audit.setCreatedAt(LocalDateTime.now());
-
-        auditRepository.save(audit);
-        return auditMapper.toDto(audit);
-    }
-
-    // Implementación usando action/description/userId
-    @Override
-    public AuditDTO saveAudit(String action, String description, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
         Audit audit = new Audit();
         audit.setAction(action);
+        audit.setEntity(entity);
+        audit.setEntityId(entityId);
         audit.setDescription(description);
         audit.setDate(LocalDate.now());
         audit.setTime(LocalTime.now());
@@ -63,33 +52,53 @@ public class AuditServiceImpl implements AuditService {
         audit.setUser(user);
 
         auditRepository.save(audit);
-        return auditMapper.toDto(audit);
     }
 
+    // ======================================================
+    // CONSULTAS
+    // ======================================================
     @Override
-    public List<AuditDTO> getAllAudits() {
+    @Transactional(readOnly = true)
+    public List<AuditDTO> findAll() {
         return auditRepository.findAll()
                 .stream()
-                .map(auditMapper::toDto)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AuditDTO> getAuditsByUser(Long userId) {
+    @Transactional(readOnly = true)
+    public List<AuditDTO> findByUser(Long userId) {
         return auditRepository.findByUserId(userId)
                 .stream()
-                .map(auditMapper::toDto)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void registerAction(Long userId, String action) {
-        saveAudit(action, "Acción registrada automáticamente", userId);
+    @Transactional(readOnly = true)
+    public List<AuditDTO> findByDateRange(LocalDate from, LocalDate to) {
+        return auditRepository.findByDateBetween(from, to)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public void log(Long user_Id, String action, String description, Long id) {
-        saveAudit(action, description, user_Id);
+    // ======================================================
+    // MAPPER PRIVADO (CONTROLADO)
+    // ======================================================
+    private AuditDTO toDto(Audit audit) {
+        AuditDTO dto = new AuditDTO();
+        dto.setId(audit.getId());
+        dto.setAction(audit.getAction());
+        dto.setEntity(audit.getEntity());
+        dto.setEntityId(audit.getEntityId());
+        dto.setDescription(audit.getDescription());
+        dto.setDate(audit.getDate());
+        dto.setTime(audit.getTime());
+        dto.setUserId(audit.getUser().getId());
+        return dto;
     }
+
 }
 

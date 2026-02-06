@@ -3,27 +3,32 @@ package com.example.eventgest.domain.dto;
 import com.example.eventgest.domain.enums.EventStatus;
 import lombok.Data;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Data
 public class EventDTO {
 
-    private Long Id;
-    private String eventName;
-    private String description;
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private Integer guestCount;
-    private String location;
-    private EventStatus status;
-    private Integer maxCapacity;
+    private Long id;
 
-    // Relaciones (solo Ids)
-    private Long userId;
+    // ===============================
+    // DATOS DEL EVENTO
+    // ===============================
+
+    private String title;
+    private String description;
+    private String place;
+
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
+
+    private Integer capacity;
+    private EventStatus status;
+
+    // ===============================
+    // RELACIONES (SOLO IDS)
+    // ===============================
+
     private Long programId;
     private Long eventTypeId;
+    private Long ownerId;
 }
-
-

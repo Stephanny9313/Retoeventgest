@@ -3,21 +3,25 @@ package com.example.eventgest.domain.service.Impl;
 import com.example.eventgest.domain.dto.AuditDTO;
 import com.example.eventgest.persistence.entity.Audit;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface AuditService {
-    AuditDTO saveAudit(AuditDTO auditDTO);
 
-    List<AuditDTO> getAllAudits();
+    void  log(
+            Long user_Id,
+            String action,
+            String entity,
+            Long entityId,
+            String description
+    );
 
-    void registerAction(Long userId, String action);
+    List<AuditDTO> findAll();
 
-    List<AuditDTO> getAuditsByUser(Long userId);
+    List<AuditDTO> findByUser(Long user_Id);
 
-    void log(Long user_Id, String action, String description, Long id);
+    List<AuditDTO> findByDateRange(LocalDate from, LocalDate to);
 
-    AuditDTO saveAudit(String action, String description, Long userId);
-
-    Audit getAuditById(Long id);
 }
+
 
