@@ -1,4 +1,4 @@
-package com.example.eventgest.domain;
+package com.example.eventgest.domain.controller;
 
 
 import com.example.eventgest.EventGestAiService;

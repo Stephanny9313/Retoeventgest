@@ -5,8 +5,7 @@ import com.example.eventgest.persistence.entity.Registration;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
-    boolean existsByParticipantId(Long participantId);
+    boolean existsByParticipant_Id(Long participantId);
+    boolean existsByEvent_Id(Long eventId);
 
-
-    boolean existsByEventId(Long eventId);
 }

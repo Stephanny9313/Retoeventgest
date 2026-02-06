@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class AuditServiceImpl implements AuditService {
 
+
     private final AuditRepository auditRepository;
     private final UserRepository userRepository;
 
@@ -28,9 +29,21 @@ public class AuditServiceImpl implements AuditService {
         this.userRepository = userRepository;
     }
 
-    // ======================================================
-    // REGISTRO CENTRAL DE AUDITORÍA
-    // ======================================================
+    // ============================
+    // API pública usada por AOP
+    // ============================
+    @Override
+    public void registerAction(Long userId,
+                               String action,
+                               String description,
+                               Long entityId) {
+
+        saveAudit(userId, action, null, entityId, description);
+    }
+
+    // ============================
+    // API completa (opcional)
+    // ============================
     @Override
     public void log(Long userId,
                     String action,
@@ -38,25 +51,40 @@ public class AuditServiceImpl implements AuditService {
                     Long entityId,
                     String description) {
 
+        saveAudit(userId, action, entity, entityId, description);
+    }
+
+    // ============================
+    // Punto único de escritura
+    // ============================
+    private void saveAudit(Long userId,
+                           String action,
+                           String entity,
+                           Long entityId,
+                           String description) {
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() ->
+                        new IllegalStateException("Usuario no encontrado para auditoría"));
+
+        LocalDateTime now = LocalDateTime.now();
 
         Audit audit = new Audit();
         audit.setAction(action);
         audit.setEntity(entity);
         audit.setEntityId(entityId);
         audit.setDescription(description);
-        audit.setDate(LocalDate.now());
-        audit.setTime(LocalTime.now());
-        audit.setCreatedAt(LocalDateTime.now());
+        audit.setCreatedAt(now);
+        audit.setDate(now.toLocalDate());
+        audit.setTime(now.toLocalTime());
         audit.setUser(user);
 
         auditRepository.save(audit);
     }
 
-    // ======================================================
+    // ============================
     // CONSULTAS
-    // ======================================================
+    // ============================
     @Override
     @Transactional(readOnly = true)
     public List<AuditDTO> findAll() {
@@ -69,7 +97,7 @@ public class AuditServiceImpl implements AuditService {
     @Override
     @Transactional(readOnly = true)
     public List<AuditDTO> findByUser(Long userId) {
-        return auditRepository.findByUserId(userId)
+        return auditRepository.findByUser_Id(userId)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -84,9 +112,9 @@ public class AuditServiceImpl implements AuditService {
                 .collect(Collectors.toList());
     }
 
-    // ======================================================
-    // MAPPER PRIVADO (CONTROLADO)
-    // ======================================================
+    // ============================
+    // Mapper
+    // ============================
     private AuditDTO toDto(Audit audit) {
         AuditDTO dto = new AuditDTO();
         dto.setId(audit.getId());
@@ -99,6 +127,4 @@ public class AuditServiceImpl implements AuditService {
         dto.setUserId(audit.getUser().getId());
         return dto;
     }
-
 }
-

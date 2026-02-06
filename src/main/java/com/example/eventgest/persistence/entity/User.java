@@ -1,5 +1,6 @@
 package com.example.eventgest.persistence.entity;
 
+import com.example.eventgest.domain.enums.Roltype;
 import com.example.eventgest.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,25 +33,23 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Integer phone;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserStatus status;
 
-    @Column(name = "max_capacity")
-    private Integer maxCapacity;
 
-    @OneToMany(mappedBy = "user")
+
+
+
+
+    // Usera
+    @OneToMany(mappedBy = "owner")
     private List<Event> events;
 
-
-
-    // User
-    @OneToMany(mappedBy = "user")
-    private List<ParametHistos> parametHistos;
     //rol
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
     //Audit

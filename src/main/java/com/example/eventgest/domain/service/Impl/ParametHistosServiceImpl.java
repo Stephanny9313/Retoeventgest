@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class ParametHistosServiceImpl {
 
     private final ParameterRepository parameterRepository;
-    private final ParametHistosRepository parametHistosRepository;
+    public final ParametHistosRepository parametHistosRepository;
     private final EventRepository eventRepository;
 
     public ParametHistosServiceImpl(

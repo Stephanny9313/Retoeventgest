@@ -3,46 +3,27 @@ package com.example.eventgest.domain.service.Impl;
 import com.example.eventgest.domain.repository.EventRepository;
 import com.example.eventgest.domain.repository.ParticipantRepository;
 import com.example.eventgest.domain.repository.RegistrationRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional
 public class RegistrationServiceImpl {
 
-    private final ParticipantRepository  participantRepository;
     private final RegistrationRepository registrationRepository;
-   private final EventRepository eventRepository;
 
-    public RegistrationServiceImpl(ParticipantRepository participantRepository, RegistrationRepository registrationRepository, EventRepository eventRepository) {
-        this.participantRepository = participantRepository;
+    public RegistrationServiceImpl(RegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
-        this.eventRepository = eventRepository;
     }
 
-    public boolean isParticipantInUse(Long participantId) {
-        return registrationRepository.existsByParticipantId(participantId);
+    // ==========================
+    // VALIDACIONES DE USO
+    // ==========================
+    public boolean isParticipantRegistered(Long participantId) {
+        return registrationRepository.existsByParticipant_Id(participantId);
     }
 
-    public void deleteParticipant(Long id) {
-        if (isParticipantInUse(id)) {
-            throw new IllegalStateException("Cannot delete participant because they are registered for an event.");
-        }
-        participantRepository.deleteById(id);
+    public boolean isEventWithRegistrations(Long eventId) {
+        return registrationRepository.existsByEvent_Id(eventId);
     }
-
-     public boolean isEventInUse(Long eventId) {
-        return registrationRepository.existsByEventId(eventId);
-    }
-
-        public void deleteEvent(Long id) {
-            if (isEventInUse(id)) {
-                throw new IllegalStateException("Cannot delete event because it has registered participants.");
-            }
-            eventRepository.deleteById(id);
-        }
-
-
-
-
-
-
-
-
 }

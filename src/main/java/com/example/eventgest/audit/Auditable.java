@@ -5,9 +5,9 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface  Auditable {
+public @interface Auditable {
+    String action();     // CREATE, UPDATE, PUBLISH, CLOSE, DELETE
+    String entity();     // EVENT, PROGRAM, PARTICIPANT, etc.
 
-    String action();     // CREAR, EDITAR, PUBLICAR, CERRAR, ELIMINAR
-    String entity();     // EVENTO, PROGRAMA, PARTICIPANTE, etc.
+
 }
-

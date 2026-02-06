@@ -26,13 +26,16 @@ public class Parameter {
     private String clue;
 
     @Column(name="value",nullable = false, length = 200)
-    private String Value;
+    private String value;
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
     @Column(name = "type", nullable = false)
     private String type;
+
+    @Column(name = "modifiable")
+    private Boolean modifiable;
 
     @OneToMany(mappedBy = "parameter")
     private List<ParametHistos> parametHisto;

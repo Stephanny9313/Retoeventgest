@@ -38,8 +38,8 @@ public class Event {
     @Column(nullable = false, length = 120)
     private String place;
 
-    @Column(nullable = false)
-    private Integer capacity;
+    @Column(name = "max_capacity")
+    private Integer maxCapacity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -63,6 +63,9 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Registration> registrations;
+
+
+
 
 
     // METADATOS

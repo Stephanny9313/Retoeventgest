@@ -13,12 +13,15 @@ public interface EventRepository
         extends JpaRepository<Event, Long>,
         JpaSpecificationExecutor<Event> {
 
-    List<Event> findByEventTypeId(Long eventTypeId);
 
-    boolean existsByProgramId(Long programId);
+    List<Event> findByEventType_Id(Long eventTypeId);
 
-    boolean existsByUserId(Long userId);
+    boolean existsByEventType_Id(Long eventTypeId);
 
-    boolean existsByEventTypeId(Long eventTypeId);
+    boolean existsByOwner_Id(Long userId);
+
+
+
+    boolean existsByProgram_Id(Long programId);
 }
 

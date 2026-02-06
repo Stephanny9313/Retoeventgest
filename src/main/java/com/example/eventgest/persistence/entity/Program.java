@@ -1,6 +1,7 @@
 package com.example.eventgest.persistence.entity;
 
 
+import com.example.eventgest.domain.enums.ProgramStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,9 +34,10 @@ public class Program {
     @Column(name="endyear",nullable = false)
     private LocalDate endyear;
 
-    @EnumeratedValue
-    @Column(name="status",nullable = false)
-    private Enum status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ProgramStatus status;
+
 
 
 

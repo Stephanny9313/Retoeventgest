@@ -7,7 +7,7 @@ import com.example.eventgest.domain.repository.EventRepository;
 import com.example.eventgest.domain.repository.EventTypeRepository;
 import com.example.eventgest.domain.repository.ProgramRepository;
 import com.example.eventgest.domain.repository.UserRepository;
-import com.example.eventgest.domain.service.EventService;
+import com.example.eventgest.domain.service.Impl.EventService;
 
 import com.example.eventgest.persistence.entity.Event;
 import com.example.eventgest.persistence.entity.User;
@@ -49,11 +49,14 @@ public class EventServiceImpl implements EventService {
     // ===============================
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName(); // usuario autenticado
-        User user = (User) userRepository.findByUsername(username)
+        String email = auth.getName(); // Spring Security devuelve el principal (email)
+
+        User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         return user.getId();
     }
+
 
     // ===============================
     // CREATE

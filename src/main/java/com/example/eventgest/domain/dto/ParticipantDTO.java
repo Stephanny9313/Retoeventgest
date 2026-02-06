@@ -3,7 +3,10 @@ package com.example.eventgest.domain.dto;
 import com.example.eventgest.domain.enums.DocumentType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
+
+
+
 
 @Data
 public class ParticipantDTO {

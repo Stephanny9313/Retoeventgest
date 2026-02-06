@@ -8,19 +8,20 @@ import java.util.List;
 
 public interface AuditService {
 
-    void  log(
-            Long user_Id,
-            String action,
-            String entity,
-            Long entityId,
-            String description
-    );
+
+
+    void log(Long userId, String action, String entity, Long entityId, String description);
 
     List<AuditDTO> findAll();
 
-    List<AuditDTO> findByUser(Long user_Id);
+    List<AuditDTO> findByUser(Long userId);
 
     List<AuditDTO> findByDateRange(LocalDate from, LocalDate to);
+
+    void registerAction(Long userId, String action, String description, Long entityId);
+
+
+
 
 }
 

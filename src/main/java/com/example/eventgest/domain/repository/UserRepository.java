@@ -7,13 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsByRolId(Long rolId);
+    Optional<User> findByEmailIgnoreCase(String email);
+    Optional<User> findByEmail(String email);
 
-    void saveById(Long id);
-
-    void updateById(Long id);
-
-    void assignRol(Long userId, Long rolId);
-
-    Optional<Object> findByUsername(String username);
+    boolean existsByRol_Id(Long rolId);
 }
+
+
