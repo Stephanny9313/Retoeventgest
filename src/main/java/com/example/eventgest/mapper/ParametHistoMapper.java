@@ -8,18 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParametHistoMapper {
 
-        private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-        public ParametHistoMapper(ModelMapper modelMapper) {
-            this.modelMapper = modelMapper;
-        }
-
-        public ParametHistoDTO toDto(ParametHistos parametHisto) {
-            return modelMapper.map(parametHisto, ParametHistoDTO.class);
-        }
-
-        public ParametHistos toEntity(ParametHistoDTO dto) {
-            return modelMapper.map(dto, ParametHistos.class);
-        }
+    public ParametHistoMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
+    public ParametHistoDTO toDto(ParametHistos parametHisto) {
+        return modelMapper.map(parametHisto, ParametHistoDTO.class);
+    }
+
+    public ParametHistos toEntity(ParametHistoDTO dto) {
+        return modelMapper.map(dto, ParametHistos.class);
+    }
+}

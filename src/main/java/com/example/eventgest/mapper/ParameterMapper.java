@@ -8,22 +8,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParameterMapper {
 
+    private final ModelMapper modelMapper;
 
-        private final ModelMapper modelMapper;
-
-        public ParameterMapper(ModelMapper modelMapper) {
-            this.modelMapper = modelMapper;
-        }
-
-        public ParameterDTO toDto(Parameter parameter) {
-            return modelMapper.map(parameter, ParameterDTO.class);
-        }
-
-        public Parameter toEntity(ParameterDTO dto) {
-            return modelMapper.map(dto, Parameter.class);
-        }
-
-
+    public ParameterMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
+    public ParameterDTO toDto(Parameter parameter) {
+        return modelMapper.map(parameter, ParameterDTO.class);
+    }
+
+    public Parameter toEntity(ParameterDTO dto) {
+        return modelMapper.map(dto, Parameter.class);
+    }
+}
 

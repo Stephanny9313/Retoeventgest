@@ -1,4 +1,4 @@
-package com.example.eventgest.domain.service.Impl;
+package com.example.eventgest.domain.service;
 
 import com.example.eventgest.domain.dto.EventDTO;
 import org.springframework.data.domain.Page;
@@ -8,13 +8,13 @@ import java.time.LocalDate;
 
 public interface EventService {
 
-    EventDTO createEvent(EventDTO dto, Long user_Id);
+    EventDTO createEvent(EventDTO dto);
 
-    EventDTO updateEvent(Long id, EventDTO dto, Long user_Id);
+    EventDTO updateEvent(Long id, EventDTO dto);
 
-    EventDTO publish(Long id, Long user_Id);
+    EventDTO publish(Long id);
 
-    EventDTO close(Long id, Long user_Id);
+    EventDTO close(Long id);
 
     EventDTO findById(Long id);
 
@@ -26,7 +26,3 @@ public interface EventService {
             Pageable pageable
     );
 }
-
-
-
-

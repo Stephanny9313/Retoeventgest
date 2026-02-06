@@ -7,16 +7,17 @@ import com.example.eventgest.domain.repository.EventRepository;
 import com.example.eventgest.domain.repository.EventTypeRepository;
 import com.example.eventgest.domain.repository.ProgramRepository;
 import com.example.eventgest.domain.repository.UserRepository;
-import com.example.eventgest.domain.service.Impl.EventService;
+import com.example.eventgest.domain.service.EventService;
+
 import com.example.eventgest.persistence.entity.Event;
-import com.example.eventgest.persistence.entity.EventType;
-import com.example.eventgest.persistence.entity.Program;
 import com.example.eventgest.persistence.entity.User;
 import com.example.eventgest.EventSpecification;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -36,7 +37,6 @@ public class EventServiceImpl implements EventService {
                             EventTypeRepository eventTypeRepository,
                             UserRepository userRepository,
                             ModelMapper modelMapper) {
-
         this.eventRepository = eventRepository;
         this.programRepository = programRepository;
         this.eventTypeRepository = eventTypeRepository;
@@ -45,12 +45,23 @@ public class EventServiceImpl implements EventService {
     }
 
     // ===============================
+    // Helper: obtener usuario actual
+    // ===============================
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName(); // usuario autenticado
+        User user = (User) userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return user.getId();
+    }
+
+    // ===============================
     // CREATE
     // ===============================
     @Override
     @Auditable(action = "CREAR", entity = "EVENTO")
-
-    public EventDTO createEvent(EventDTO dto, Long user_id) {
+    public EventDTO createEvent(EventDTO dto) {
+        Long userId = getCurrentUserId();
 
         if (dto.getTitle() == null || dto.getTitle().isBlank()) {
             throw new IllegalArgumentException("El título del evento es obligatorio");
@@ -62,25 +73,28 @@ public class EventServiceImpl implements EventService {
 
         Event event = modelMapper.map(dto, Event.class);
         event.setStatus(EventStatus.DRAFT);
-
         event.setProgram(programRepository.findById(dto.getProgramId())
                 .orElseThrow(() -> new RuntimeException("Programa no encontrado")));
-
         event.setEventType(eventTypeRepository.findById(dto.getEventTypeId())
                 .orElseThrow(() -> new RuntimeException("Tipo de evento no encontrado")));
-
-        event.setOwner(userRepository.findById(user_id)
+        event.setOwner(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
 
         Event saved = eventRepository.save(event);
+
+        // auditoría manual si tu AOP no lo hace
+        // auditService.log(userId, "CREAR", "Evento creado con id: " + saved.getId(), saved.getId());
+
         return modelMapper.map(saved, EventDTO.class);
     }
 
     // ===============================
     // UPDATE
+    // ===============================
     @Override
     @Auditable(action = "EDITAR", entity = "EVENTO")
-    public EventDTO updateEvent(Long id, EventDTO dto, Long user_id) {
+    public EventDTO updateEvent(Long id, EventDTO dto) {
+        Long userId = getCurrentUserId();
 
         Event existing = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
@@ -92,6 +106,9 @@ public class EventServiceImpl implements EventService {
         modelMapper.map(dto, existing);
         Event saved = eventRepository.save(existing);
 
+        // auditoría manual si AOP no lo hace
+        // auditService.log(userId, "EDITAR", "Evento editado con id: " + id, id);
+
         return modelMapper.map(saved, EventDTO.class);
     }
 
@@ -100,7 +117,8 @@ public class EventServiceImpl implements EventService {
     // ===============================
     @Override
     @Auditable(action = "PUBLICAR", entity = "EVENTO")
-    public EventDTO publish(Long id, Long user_id) {
+    public EventDTO publish(Long id) {
+        Long userId = getCurrentUserId();
 
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
@@ -114,7 +132,11 @@ public class EventServiceImpl implements EventService {
         }
 
         event.setStatus(EventStatus.PUBLISHED);
-        return modelMapper.map(eventRepository.save(event), EventDTO.class);
+        Event saved = eventRepository.save(event);
+
+        // auditService.log(userId, "PUBLICAR", "Evento publicado con id: " + id, id);
+
+        return modelMapper.map(saved, EventDTO.class);
     }
 
     // ===============================
@@ -122,8 +144,7 @@ public class EventServiceImpl implements EventService {
     // ===============================
     @Override
     @Auditable(action = "CERRAR", entity = "EVENTO")
-    public EventDTO close(Long id, Long userId) {
-
+    public EventDTO close(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
 
@@ -134,6 +155,7 @@ public class EventServiceImpl implements EventService {
         event.setStatus(EventStatus.CLOSED);
         return modelMapper.map(eventRepository.save(event), EventDTO.class);
     }
+
 
     // ===============================
     // FIND BY ID

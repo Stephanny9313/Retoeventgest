@@ -2,7 +2,8 @@ package com.example.eventgest.domain.controller;
 
 
 import com.example.eventgest.domain.dto.EventDTO;
-import com.example.eventgest.domain.service.Impl.EventService;
+import com.example.eventgest.domain.service.EventService;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;

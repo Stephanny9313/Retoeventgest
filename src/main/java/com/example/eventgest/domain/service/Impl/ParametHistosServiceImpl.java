@@ -9,7 +9,7 @@ import com.example.eventgest.persistence.entity.Parameter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Service
 @Transactional
@@ -28,61 +28,34 @@ public class ParametHistosServiceImpl {
         this.eventRepository = eventRepository;
     }
 
-    public void registerParameterChange(
-            Long parameterId,
-            String oldValue,
-            String newValue,
-            Long userId
-    ) {
+    // registrar cambio de parámetro
+    public void registerParameterChange(Long parameterId, String oldValue, String newValue, Long userId) {
         Parameter parameter = parameterRepository.findById(parameterId)
-                .orElseThrow(() ->
-                        new RuntimeException("Parámetro no encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Parámetro no encontrado"));
 
-        ParametHistos parametHistos= new ParametHistos();
-        parametHistos.setParameter(parameter);
-        parametHistos.setNewValue(newValue);
-        parametHistos.setNewValue(oldValue);
-        parametHistos.setPreviousValue(oldValue);
-        parametHistos.setPreviousValue(oldValue);
-        parametHistos.setDate(LocalDateTime.now().toLocalDate());
+        ParametHistos histo = new ParametHistos();
+        histo.setParameter(parameter);
+        histo.setPreviousValue(oldValue);
+        histo.setNewValue(newValue);
+        histo.setDate(LocalDate.now());
+        // histo.setUser(userRepository.findById(userId).orElseThrow(...)); // si quieres guardar usuario
 
-
-
-
-
+        parametHistosRepository.save(histo);
     }
 
-    public void registerParameterUsage(
-            Long parameterId,
-            Long eventId
-    ) {
+    // registrar uso de parámetro en evento
+    public void registerParameterUsage(Long parameterId, Long eventId) {
         Parameter parameter = parameterRepository.findById(parameterId)
-                .orElseThrow(() ->
-                        new RuntimeException("Parámetro no encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Parámetro no encontrado"));
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() ->
-                        new RuntimeException("Evento no encontrado")
-                );
+                .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
 
-        ParametHistos parametHistos = new ParametHistos();
-        parametHistos.setParameter(parameter);
-        parametHistos.setUser(event.getUser());
-        parametHistos.setDate(LocalDateTime.now().toLocalDate());
+        ParametHistos histo = new ParametHistos();
+        histo.setParameter(parameter);
+        histo.setUser(event.getOwner()); // o el campo que tengas en Event
+        histo.setDate(LocalDate.now());
 
-
-
+        parametHistosRepository.save(histo);
     }
-
-
-
 }
-
-
-
-
-
-
-

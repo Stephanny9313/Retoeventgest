@@ -1,6 +1,5 @@
 package com.example.eventgest.domain.repository;
 
-import com.example.eventgest.persistence.entity.EventType;
 import com.example.eventgest.persistence.entity.Parameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,11 +10,6 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 
     Optional<Parameter> findByClue(String clue);
 
-    List<Parameter> findByModifiableTrue();
-
-
-
-
-
-
+    List<Parameter> findByModifiableTrue(); // requiere que exista campo Boolean modifiable en Parameter
 }
+

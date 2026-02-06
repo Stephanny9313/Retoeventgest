@@ -4,8 +4,6 @@ import com.example.eventgest.domain.enums.DocumentType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Id;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,34 +11,30 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name= "participants")
-public class    Participant {
+@Table(name = "participants")
+public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "program_id", nullable = false)
+    @Column(name = "participant_id")
     private Long id;
 
-    @Column(name="name",nullable = false)
+    @Column(name="name", nullable = false)
     private String name;
 
-    @EnumeratedValue
-    @Column(name="documenttype",nullable = false,length = 20)
-    private DocumentType documentType ;
+    @Enumerated(EnumType.STRING)
+    @Column(name="document_type", nullable = false, length = 20)
+    private DocumentType documentType;
 
-    @Column(name="documentnumber",nullable = false)
+    @Column(name="document_number", nullable = false)
     private Integer documentNumber;
 
-    @Column(name="email",nullable=false,length = 20)
+    @Column(name="email", nullable = false, length = 50)
     private String email;
 
-    @Column(name="phone",nullable=false)
-    private Integer phone;
-
+    @Column(name="phone", nullable = false, length = 20)
+    private String phone;
 
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Registration> registrations = new ArrayList<>();
-
-
 }
-

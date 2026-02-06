@@ -7,11 +7,10 @@ import java.time.LocalDate;
 @Data
 public class ParametHistoDTO {
 
-    private Long Id;
+    private Long id;                // corregido
     private String previousValue;
     private String newValue;
     private LocalDate date;
 
-
-
 }
+
