@@ -26,20 +26,19 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-
-	// ModelMapper
 	implementation 'org.modelmapper:modelmapper:3.2.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
+
+
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
 	// PostgreSQL
 	runtimeOnly 'org.postgresql:postgresql'
-
-	// Desarrollo Docker
-	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -48,6 +47,11 @@ dependencies {
 	// Langchain4j
 	implementation 'dev.langchain4j:langchain4j-open-ai-spring-boot-starter:1.0.0-beta1'
 	implementation 'dev.langchain4j:langchain4j-spring-boot-starter:1.0.0-beta1'
+}
+
+tasks.withType(JavaCompile) {
+	options.annotationProcessorPath = configurations.annotationProcessor
+	options.compilerArgs += ["-Amapstruct.defaultComponentModel=spring"]
 }
 
 tasks.named('test') {

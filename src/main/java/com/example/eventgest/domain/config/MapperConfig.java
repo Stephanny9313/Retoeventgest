@@ -9,7 +9,9 @@ public class MapperConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper mapper = new ModelMapper(); // ← crear la instancia
+        mapper.getConfiguration().setSkipNullEnabled(true);
+        mapper.getConfiguration().setMatchingStrategy(org.modelmapper.convention.MatchingStrategies.STRICT);
+        return mapper;
     }
-
 }

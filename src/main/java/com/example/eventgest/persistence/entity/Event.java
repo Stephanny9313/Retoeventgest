@@ -1,6 +1,10 @@
 package com.example.eventgest.persistence.entity;
 
 import com.example.eventgest.domain.enums.EventStatus;
+import com.example.eventgest.persistence.entity.EventType;
+import com.example.eventgest.persistence.entity.Program;
+import com.example.eventgest.persistence.entity.Registration;
+import com.example.eventgest.persistence.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,78 +20,49 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "event_id")
     private Long id;
 
-
-    // DATOS PRINCIPALES
-
-
-    @Column(nullable = false, length = 120)
+    @Column(name ="event_name", nullable = false, length = 120)
     private String title;
 
     @Column(length = 300)
     private String description;
 
-    @Column(name = "start_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime startAt;
 
-    @Column(name = "end_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime endAt;
 
     @Column(nullable = false, length = 120)
     private String place;
 
-    @Column(name = "max_capacity")
     private Integer maxCapacity;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private EventStatus status;
 
-
-    // RELACIONES
-
-
+    // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_type_id", nullable = false)
     private EventType eventType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Registration> registrations;
 
-
-
-
-
-    // METADATOS
-
-
-    @Column(name = "created_at", nullable = false, updatable = false)
+    // Auditoría
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
-    // CALLBACKS JPA
-
-
     @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
+    protected void onCreate() { createdAt = LocalDateTime.now(); }
     @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+    protected void onUpdate() { updatedAt = LocalDateTime.now(); }
 }

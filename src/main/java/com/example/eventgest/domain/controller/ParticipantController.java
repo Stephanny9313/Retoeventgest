@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/participants")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class ParticipantController {
 
     private final ParticipantServiceImpl participantService;
@@ -25,33 +25,6 @@ public class ParticipantController {
         this.participantMapper = participantMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<ParticipantDTO> create(@Valid @RequestBody ParticipantDTO dto) {
-        Participant participant = participantMapper.toEntity(dto);
-        Participant saved = participantService.createParticipant(participant);
-        return ResponseEntity.ok(participantMapper.toDto(saved));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ParticipantDTO> update(@PathVariable Long id,
-                                                 @Valid @RequestBody ParticipantDTO dto) {
-        Participant participant = participantMapper.toEntity(dto);
-        Participant updated = participantService.updateParticipant(id, participant);
-        return ResponseEntity.ok(participantMapper.toDto(updated));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ParticipantDTO> getById(@PathVariable Long id) {
-        Participant participant = participantService.getParticipantById(id);
-        return ResponseEntity.ok(participantMapper.toDto(participant));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        participantService.deleteParticipant(id);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping
     public ResponseEntity<List<ParticipantDTO>> getAll() {
         List<ParticipantDTO> list = participantService.getAllParticipants()
@@ -59,5 +32,32 @@ public class ParticipantController {
                 .map(participantMapper::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ParticipantDTO> getById(@PathVariable Long id) {
+        Participant p = participantService.getParticipantById(id);
+        return ResponseEntity.ok(participantMapper.toDto(p));
+    }
+
+    @PostMapping
+    public ResponseEntity<ParticipantDTO> create(@RequestBody ParticipantDTO dto) {
+        Participant p = participantMapper.toEntity(dto);
+        Participant saved = participantService.createParticipant(p);
+        return ResponseEntity.ok(participantMapper.toDto(saved));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ParticipantDTO> update(@PathVariable Long id,
+                                                 @RequestBody ParticipantDTO dto) {
+        Participant p = participantMapper.toEntity(dto);
+        Participant updated = participantService.updateParticipant(id, p);
+        return ResponseEntity.ok(participantMapper.toDto(updated));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        participantService.deleteParticipant(id);
+        return ResponseEntity.noContent().build();
     }
 }

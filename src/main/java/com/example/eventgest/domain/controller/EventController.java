@@ -1,9 +1,7 @@
 package com.example.eventgest.domain.controller;
 
-
 import com.example.eventgest.domain.dto.EventDTO;
 import com.example.eventgest.domain.service.Impl.EventService;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +12,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "*") // Para Angular / frontend
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 public class EventController {
 
     private final EventService eventService;
@@ -24,63 +22,63 @@ public class EventController {
     }
 
     // ===============================
-    // CREATE
+    // CREAR EVENTO
     // ===============================
     @PostMapping
-    public ResponseEntity<EventDTO> create(@RequestBody EventDTO dto) {
-        return ResponseEntity.ok(eventService.createEvent(dto));
+    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO dto) {
+        EventDTO created = eventService.createEvent(dto);
+        return ResponseEntity.ok(created);
     }
 
     // ===============================
-    // UPDATE
+    // ACTUALIZAR EVENTO
     // ===============================
     @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> update(
-            @PathVariable Long id,
-            @RequestBody EventDTO dto
-    ) {
-        return ResponseEntity.ok(eventService.updateEvent(id, dto));
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable Long id,
+                                                @RequestBody EventDTO dto) {
+        EventDTO updated = eventService.updateEvent(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     // ===============================
-    // PUBLISH
+    // PUBLICAR EVENTO
     // ===============================
-    @PutMapping("/{id}/publish")
-    public ResponseEntity<EventDTO> publish(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.publish(id));
+    @PatchMapping("/{id}/publish")
+    public ResponseEntity<EventDTO> publishEvent(@PathVariable Long id) {
+        EventDTO published = eventService.publish(id);
+        return ResponseEntity.ok(published);
     }
 
     // ===============================
-    // CLOSE
+    // CERRAR EVENTO
     // ===============================
-    @PutMapping("/{id}/close")
-    public ResponseEntity<EventDTO> close(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.close(id));
+    @PatchMapping("/{id}/close")
+    public ResponseEntity<EventDTO> closeEvent(@PathVariable Long id) {
+        EventDTO closed = eventService.close(id);
+        return ResponseEntity.ok(closed);
     }
 
     // ===============================
-    // FIND BY ID
+    // OBTENER EVENTO POR ID
     // ===============================
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.findById(id));
+    public ResponseEntity<EventDTO> getEventById(@PathVariable Long id) {
+        EventDTO dto = eventService.findById(id);
+        return ResponseEntity.ok(dto);
     }
 
     // ===============================
-    // FILTER + PAGINATION
+    // FILTRADO DE EVENTOS
     // ===============================
     @GetMapping
-    public ResponseEntity<Page<EventDTO>> findFiltered(
+    public ResponseEntity<Page<EventDTO>> getEvents(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long programId,
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(
-                eventService.findFiltered(status, programId, dateFrom, dateTo, pageable)
-        );
+        Page<EventDTO> page = eventService.findFiltered(status, programId, dateFrom, dateTo, pageable);
+        return ResponseEntity.ok(page);
     }
 }

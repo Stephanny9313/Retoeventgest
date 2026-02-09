@@ -29,16 +29,14 @@ public class Program {
     private String name;
 
     @Column (name="staryear",nullable = false)
-    private LocalDate staryear;
+    private LocalDate starYear;
 
     @Column(name="endyear",nullable = false)
-    private LocalDate endyear;
+    private LocalDate endYear;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ProgramStatus status;
-
-
 
 
     @OneToMany(

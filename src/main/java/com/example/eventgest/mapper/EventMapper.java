@@ -1,55 +1,42 @@
 package com.example.eventgest.mapper;
 
+
 import com.example.eventgest.domain.dto.EventDTO;
 import com.example.eventgest.persistence.entity.Event;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventMapper {
 
-    private final ModelMapper modelMapper;
-
-    public EventMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-
-        // Configuración correcta del mapper
-        this.modelMapper.getConfiguration()
-                .setSkipNullEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-    }
-
-    // ===============================
-    // ENTITY → DTO
-    // ===============================
-    public EventDTO toDto(Event event) {
+    public static EventDTO toDto(Event event) {
         if (event == null) return null;
-
-        EventDTO dto = modelMapper.map(event, EventDTO.class);
-
-        if (event.getOwner() != null) {
-            dto.setOwnerId(event.getOwner().getId());
-        }
-
-        if (event.getProgram() != null) {
-            dto.setProgramId(event.getProgram().getId());
-        }
-
-        if (event.getEventType() != null) {
-            dto.setEventTypeId(event.getEventType().getId());
-        }
-
+        EventDTO dto = new EventDTO();
+        dto.setId(event.getId());
+        dto.setTitle(event.getTitle());
+        dto.setDescription(event.getDescription());
+        dto.setStartAt(event.getStartAt());
+        dto.setEndAt(event.getEndAt());
+        dto.setPlace(event.getPlace());
+        dto.setMaxCapacity(event.getMaxCapacity());
+        dto.setStatus(event.getStatus());
+        dto.setOwnerId(event.getOwner() != null ? event.getOwner().getId() : null);
+        dto.setProgramId(event.getProgram() != null ? event.getProgram().getId() : null);
+        dto.setEventTypeId(event.getEventType() != null ? event.getEventType().getId() : null);
         return dto;
     }
 
-    // ===============================
-    // DTO → ENTITY
-    // ===============================
-    public Event toEntity(EventDTO dto) {
+    public static Event toEntity(EventDTO dto) {
         if (dto == null) return null;
-
-        // Relaciones se asignan en el Service
-        return modelMapper.map(dto, Event.class);
+        Event event = new Event();
+        event.setId(dto.getId());
+        event.setTitle(dto.getTitle());
+        event.setDescription(dto.getDescription());
+        event.setStartAt(dto.getStartAt());
+        event.setEndAt(dto.getEndAt());
+        event.setPlace(dto.getPlace());
+        event.setMaxCapacity(dto.getMaxCapacity());
+        event.setStatus(dto.getStatus());
+        // Relacionados se asignan en el servicio o repositorio
+        return event;
     }
 }

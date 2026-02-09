@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
     boolean existsByParticipant_Id(Long participantId);
     boolean existsByEvent_Id(Long eventId);
+    boolean existsByEvent_IdAndParticipant_Id(Long eventId, Long participantId);
 
 }

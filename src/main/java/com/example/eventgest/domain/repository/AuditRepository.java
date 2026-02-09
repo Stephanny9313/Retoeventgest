@@ -16,6 +16,8 @@ public interface AuditRepository extends JpaRepository<Audit, Long> {
     // Comprobar si existen auditorías para un usuario
     boolean existsByUser_Id(Long userId);
 
+    List<Audit> findTop5ByOrderByDateDesc();
+
     // Buscar auditorías por rango de fechas
     List<Audit> findByDateBetween(LocalDate from, LocalDate to);
 }

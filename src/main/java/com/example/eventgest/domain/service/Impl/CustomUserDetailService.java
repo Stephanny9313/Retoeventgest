@@ -1,5 +1,6 @@
 package com.example.eventgest.domain.service.Impl;
 
+import com.example.eventgest.domain.enums.UserStatus;
 import com.example.eventgest.domain.repository.UserRepository;
 import com.example.eventgest.persistence.entity.User;
 import jakarta.transaction.Transactional;
@@ -13,11 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class CustomUserDetailService implements UserDetailsService {
-
-@Autowired
     private final UserRepository userRepository;
-
 
     public CustomUserDetailService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -32,8 +31,14 @@ public class CustomUserDetailService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority(user.getRol().getRolType().name()))
+                user.getStatus() == UserStatus.ACTIVE, // SOLO usuarios activos
+                true, true, true,
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().getRolType().name()))
+
+
+
         );
+
     }
 }
 

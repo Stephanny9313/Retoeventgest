@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 public  class ProgramServiceImpl {
 
-    private final ProgramRepository programRepository;
+    public final ProgramRepository programRepository;
     private final EventRepository eventRepository;
 
     public ProgramServiceImpl(ProgramRepository programRepository,

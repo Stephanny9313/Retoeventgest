@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -20,7 +21,7 @@ public class Registration {
     private Long id;
 
     @Column(name = "registration_date", nullable = false)
-    private Date registrationDate;
+    private LocalDate registrationDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "attendance", nullable = false, length = 20)
@@ -33,7 +34,6 @@ public class Registration {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participant_id", nullable = false)
     private Participant participant;
-
 
 
 }

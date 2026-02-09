@@ -20,6 +20,7 @@ public interface EventRepository
 
     boolean existsByOwner_Id(Long userId);
 
+    List<Event> findTop5ByOrderByCreatedAtDesc();
 
 
     boolean existsByProgram_Id(Long programId);

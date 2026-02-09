@@ -3,6 +3,7 @@ package com.example.eventgest.domain.service.Impl;
 import com.example.eventgest.domain.repository.EventRepository;
 import com.example.eventgest.domain.repository.ParametHistosRepository;
 import com.example.eventgest.domain.repository.ParameterRepository;
+import com.example.eventgest.domain.repository.UserRepository;
 import com.example.eventgest.persistence.entity.Event;
 import com.example.eventgest.persistence.entity.ParametHistos;
 import com.example.eventgest.persistence.entity.Parameter;
@@ -18,14 +19,16 @@ public class ParametHistosServiceImpl {
     private final ParameterRepository parameterRepository;
     public final ParametHistosRepository parametHistosRepository;
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     public ParametHistosServiceImpl(
             ParameterRepository parameterRepository,
             ParametHistosRepository parametHistosRepository,
-            EventRepository eventRepository) {
+            EventRepository eventRepository, UserRepository userRepository) {
         this.parameterRepository = parameterRepository;
         this.parametHistosRepository = parametHistosRepository;
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
     }
 
     // registrar cambio de parámetro
@@ -58,4 +61,24 @@ public class ParametHistosServiceImpl {
 
         parametHistosRepository.save(histo);
     }
+    public void updateParameter(Long parameterId, String newValue, Long userId) {
+        Parameter parameter = parameterRepository.findById(parameterId)
+                .orElseThrow(() -> new RuntimeException("Parámetro no encontrado"));
+
+        String oldValue = parameter.getValue(); // guardamos el valor anterior
+        parameter.setValue(newValue);           // actualizamos el parámetro
+        parameterRepository.save(parameter);
+
+        // registramos en historial
+        ParametHistos histo = new ParametHistos();
+        histo.setParameter(parameter);
+        histo.setPreviousValue(oldValue);
+        histo.setNewValue(newValue);
+        histo.setDate(LocalDate.now());
+        histo.setUser(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+
+        parametHistosRepository.save(histo);
+    }
+
 }
