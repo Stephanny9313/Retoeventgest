@@ -11,7 +11,7 @@ public class ProgramDTO {
     private Long id;
     private String code;
     private String name;
-    private LocalDate strarYear;
+    private LocalDate starYear;
     private LocalDate endYear;
     private ProgramStatus status;
 

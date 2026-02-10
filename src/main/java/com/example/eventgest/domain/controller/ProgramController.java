@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/programs")
@@ -26,16 +25,37 @@ public class ProgramController {
     }
 
     // ===============================
+    // GENERAR CÓDIGO SECUENCIAL
+    // ===============================
+    private String generateCode() {
+        List<Program> allPrograms = programService.programRepository.findAll();
+
+        if (allPrograms.isEmpty()) {
+            return "PROG001";
+        }
+
+        // Obtener el código más alto
+        int maxNumber = allPrograms.stream()
+                .map(p -> {
+                    String num = p.getCode().replace("PROG", "");
+                    try {
+                        return Integer.parseInt(num);
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                })
+                .max(Integer::compare)
+                .orElse(0);
+
+        return "PROG" + String.format("%03d", maxNumber + 1);
+    }
+
+    // ===============================
     // LISTAR TODOS LOS PROGRAMAS
     // ===============================
     @GetMapping
     public ResponseEntity<List<ProgramDTO>> getAllPrograms() {
-        List<ProgramDTO> programs = programService
-                .programRepository
-                .findAll()
-                .stream()
-                .map(programMapper::toDto)
-                .collect(Collectors.toList());
+        List<ProgramDTO> programs = programService.getAllPrograms();
         return ResponseEntity.ok(programs);
     }
 
@@ -44,19 +64,23 @@ public class ProgramController {
     // ===============================
     @GetMapping("/{id}")
     public ResponseEntity<ProgramDTO> getProgramById(@PathVariable Long id) {
-        Program program = programService.programRepository
-                .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Programa no encontrado"));
-        return ResponseEntity.ok(programMapper.toDto(program));
+        ProgramDTO dto = programService.getProgramById(id);
+        return ResponseEntity.ok(dto);
     }
 
     // ===============================
-    // CREAR PROGRAMA
+    // CREAR PROGRAMA (con código auto)
     // ===============================
     @PostMapping
     public ResponseEntity<ProgramDTO> createProgram(@Valid @RequestBody ProgramDTO dto) {
         Program program = programMapper.toEntity(dto);
-        Program saved = programService.programRepository.save(program);
+
+        // Si no tiene código, generar uno automáticamente
+        if (program.getCode() == null || program.getCode().isEmpty()) {
+            program.setCode(generateCode());
+        }
+
+        Program saved = programService.saveProgram(program);
         return ResponseEntity.ok(programMapper.toDto(saved));
     }
 
@@ -70,11 +94,13 @@ public class ProgramController {
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Programa no encontrado"));
 
-        // Actualizamos los campos permitidos
-        program.setCode(dto.getCode());
         program.setName(dto.getName());
+        program.setStarYear(dto.getStarYear());
+        program.setEndYear(dto.getEndYear());
+        program.setStatus(dto.getStatus());
+        // No cambiar el código
 
-        Program updated = programService.programRepository.save(program);
+        Program updated = programService.saveProgram(program);
         return ResponseEntity.ok(programMapper.toDto(updated));
     }
 
@@ -83,7 +109,7 @@ public class ProgramController {
     // ===============================
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProgram(@PathVariable Long id) {
-        programService.deleteProgram(id); // Ya valida eventos asociados
+        programService.deleteProgram(id);
         return ResponseEntity.noContent().build();
     }
 }

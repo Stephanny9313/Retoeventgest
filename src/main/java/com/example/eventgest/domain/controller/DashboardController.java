@@ -1,5 +1,6 @@
 package com.example.eventgest.domain.controller;
 
+import com.example.eventgest.EventGestAiService;
 import com.example.eventgest.domain.repository.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,6 @@ import java.util.Map;
 @CrossOrigin(origins = "http://127.0.0.1:5500")
 public class DashboardController {
 
-
-
         private final EventRepository eventRepo;
         private final ProgramRepository programRepo;
         private final EventTypeRepository eventTypeRepo;
@@ -23,6 +22,7 @@ public class DashboardController {
         private final AuditRepository auditRepo;
         private final ParameterRepository parameterRepo;
         private final ParametHistosRepository parametHistosRepo;
+        private final EventGestAiService aiService;
 
         public DashboardController(EventRepository eventRepo,
                                    ProgramRepository programRepo,
@@ -30,7 +30,8 @@ public class DashboardController {
                                    ParticipantRepository participantRepo,
                                    AuditRepository auditRepo,
                                    ParameterRepository parameterRepo,
-                                   ParametHistosRepository parametHistosRepo) {
+                                   ParametHistosRepository parametHistosRepo,
+                                   EventGestAiService aiService) {
             this.eventRepo = eventRepo;
             this.programRepo = programRepo;
             this.eventTypeRepo = eventTypeRepo;
@@ -38,6 +39,7 @@ public class DashboardController {
             this.auditRepo = auditRepo;
             this.parameterRepo = parameterRepo;
             this.parametHistosRepo = parametHistosRepo;
+            this.aiService = aiService;
         }
 
         @GetMapping
@@ -51,6 +53,9 @@ public class DashboardController {
             data.put("auditsCount", auditRepo.count());
             data.put("parametersCount", parameterRepo.count());
             data.put("paramHistoriesCount", parametHistosRepo.count());
+
+            // Mensaje de bienvenida generado por IA
+            data.put("welcomeMessage", aiService.generateGreeting());
 
             // Últimos 5 eventos
             data.put("recentEvents", eventRepo.findTop5ByOrderByCreatedAtDesc());

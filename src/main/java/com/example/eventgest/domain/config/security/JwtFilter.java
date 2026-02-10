@@ -29,7 +29,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
 
         // ✅ Ignorar endpoints públicos
-        if (uri.startsWith("/api/auth/login")) {
+        if (uri.startsWith("/api/auth/login") ||
+            uri.startsWith("/api/programs") ||
+            uri.startsWith("/api/events") ||
+            uri.startsWith("/api/event-types") ||
+            uri.startsWith("/api/participants") ||
+            uri.startsWith("/api/dashboard")) {
             filterChain.doFilter(request, response);
             return;
         }
