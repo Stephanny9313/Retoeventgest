@@ -16,11 +16,10 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
+
 public class AuditableAspect {
 
-
-    private static final Logger log =
-            LoggerFactory.getLogger(AuditableAspect.class);
+    private static final Logger log = LoggerFactory.getLogger(AuditableAspect.class);
 
     private final AuditService auditService;
     private final UserRepository userRepository;
@@ -34,44 +33,56 @@ public class AuditableAspect {
     public void logAfter(JoinPoint joinPoint) {
         try {
             Auditable auditable = getAuditableAnnotation(joinPoint);
-            if (auditable == null) return;
-
-            Long userId = getCurrentUserId();
-            if (userId == null) return;
-
-            Long entityId = extractEntityId(joinPoint.getArgs());
-
-            String description = auditable.action() + " " + auditable.entity();
-            if (entityId != null) {
-                description += " (id=" + entityId + ")";
+            if (auditable == null) {
+                log.warn("Auditable annotation not found");
+                return;
             }
 
-            auditService.registerAction(
-                    userId,
-                    auditable.action(),
-                    description,
-                    entityId
-            );
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                log.debug("Audit skipped: No authenticated user for action {}", auditable.action());
+                return;
+            }
+
+            Long entityId = extractEntityId(joinPoint.getArgs());
+            String description = auditable.action() + " " + auditable.entity()
+                    + (entityId != null ? " (id=" + entityId + ")" : "");
+
+            log.info("Audit logged - User: {}, Action: {}, Entity: {}, Description: {}",
+                    userId, auditable.action(), auditable.entity(), description);
+
+            // Match AuditService signature: (userId, action, entity, entityId)
+            auditService.registerAction(userId, auditable.action(), auditable.entity(), entityId);
 
         } catch (Exception e) {
-            log.error("Error ejecutando auditoría", e);
+            log.error("Error during audit logging: {}", e.getMessage(), e);
         }
     }
 
     private Auditable getAuditableAnnotation(JoinPoint joinPoint) {
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        return signature.getMethod().getAnnotation(Auditable.class);
+        try {
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            return signature.getMethod().getAnnotation(Auditable.class);
+        } catch (Exception e) {
+            log.error("Error getting annotation: {}", e.getMessage());
+            return null;
+        }
     }
 
     private Long getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) return null;
-
-        String email = auth.getName();
-
-        return userRepository.findByEmailIgnoreCase(email)
-                .map(User::getId)
-                .orElse(null);
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated()) return null;
+            Object principal = auth.getPrincipal();
+            if (principal instanceof String && "anonymousUser".equals(principal)) return null;
+            String email = auth.getName();
+            return userRepository.findByEmailIgnoreCase(email)
+                    .map(u -> u.getId())
+                    .orElse(null);
+        } catch (Exception e) {
+            log.error("Error getting user ID: {}", e.getMessage(), e);
+            return null;
+        }
     }
 
     private Long extractEntityId(Object[] args) {

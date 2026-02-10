@@ -26,6 +26,9 @@ public class Event {
     @Column(name ="event_name", nullable = false, length = 120)
     private String title;
 
+    @Column(name = "cliente",  length = 120)
+    private String client;
+
     @Column(length = 300)
     private String description;
 
@@ -38,6 +41,7 @@ public class Event {
     @Column(nullable = false, length = 120)
     private String place;
 
+    @Column(name= "max_capacity" , nullable = false,length = 100)
     private Integer maxCapacity;
 
     @Enumerated(EnumType.STRING)
@@ -66,4 +70,7 @@ public class Event {
     protected void onCreate() { createdAt = LocalDateTime.now(); }
     @PreUpdate
     protected void onUpdate() { updatedAt = LocalDateTime.now(); }
+
+    public void getClient(String client) {
+    }
 }

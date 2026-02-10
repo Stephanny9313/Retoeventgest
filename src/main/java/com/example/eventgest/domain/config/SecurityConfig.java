@@ -1,14 +1,12 @@
 package com.example.eventgest.domain.config;
 
 
-import com.example.eventgest.domain.service.Impl.CustomUserDetailService;
-import com.example.eventgest.domain.service.Impl.JwtUtil;
 import com.example.eventgest.domain.config.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,16 +27,31 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            CorsConfigurationSource corsConfigurationSource
+    ) throws Exception {
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(csrf -> csrf.disable()) // deshabilita CSRF
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login","/api/programs","/api/events","/api/events","/api/partipants").permitAll() // login público)
-                        .anyRequest().authenticated() // resto de endpoints protegidos
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                        // Public endpoints - no authentication required
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/programs", "/api/programs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/event-types", "/api/event-types/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/participants", "/api/participants/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/registrations", "/api/registrations/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/dashboard", "/api/dashboard/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/participants").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/registrations").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/events").permitAll()
+
+                        // All other requests require authentication
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -55,6 +68,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
-
-

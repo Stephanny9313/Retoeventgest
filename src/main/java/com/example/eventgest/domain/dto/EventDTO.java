@@ -14,6 +14,7 @@ public class EventDTO {
     private LocalDate startAt;
     private LocalDate endAt;
     private String place;
+    private String client;
     private Integer maxCapacity;
     private EventStatus status;
     private Long programId;
@@ -21,4 +22,7 @@ public class EventDTO {
     private Long ownerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+
+
 }

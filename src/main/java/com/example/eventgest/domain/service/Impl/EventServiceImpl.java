@@ -7,8 +7,6 @@ import com.example.eventgest.domain.repository.EventRepository;
 import com.example.eventgest.domain.repository.EventTypeRepository;
 import com.example.eventgest.domain.repository.ProgramRepository;
 import com.example.eventgest.domain.repository.UserRepository;
-import com.example.eventgest.domain.service.Impl.EventService;
-
 import com.example.eventgest.persistence.entity.Event;
 import com.example.eventgest.persistence.entity.User;
 import com.example.eventgest.EventSpecification;
@@ -16,9 +14,11 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 
@@ -44,23 +44,17 @@ public class EventServiceImpl implements EventService {
         this.modelMapper = modelMapper;
     }
 
-    // ===============================
-    // Helper: obtener usuario actual
-    // ===============================
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName(); // Spring Security devuelve el principal (email)
-
+        if (auth == null || !auth.isAuthenticated() || auth.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+        String email = auth.getName();
         User user = userRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
         return user.getId();
     }
 
-
-    // ===============================
-    // CREATE
-    // ===============================
     @Override
     @Auditable(action = "CREAR", entity = "EVENTO")
     public EventDTO createEvent(EventDTO dto) {
@@ -69,9 +63,32 @@ public class EventServiceImpl implements EventService {
         if (dto.getTitle() == null || dto.getTitle().isBlank()) {
             throw new IllegalArgumentException("El título del evento es obligatorio");
         }
-
         if (dto.getPlace() == null || dto.getPlace().isBlank()) {
             throw new IllegalArgumentException("El lugar del evento es obligatorio");
+        }
+        if (dto.getStartAt() == null || dto.getEndAt() == null) {
+            throw new IllegalArgumentException("Las fechas de inicio y fin son obligatorias");
+        }
+        if (dto.getStartAt().isAfter(dto.getEndAt())) {
+            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha de fin");
+        }
+        if (dto.getProgramId() == null) {
+            throw new IllegalArgumentException("El programa del evento es obligatorio");
+        }
+        if (dto.getMaxCapacity() == null) {
+            throw new IllegalArgumentException("La capacidad máxima del evento es obligatoria");
+        }
+        if (dto.getMaxCapacity() <= 0) {
+            throw new IllegalArgumentException("La capacidad máxima del evento debe ser mayor a cero");
+        }
+        if (dto.getEventTypeId() == null) {
+            throw new IllegalArgumentException("El tipo de evento es obligatorio");
+        }
+        if (dto.getDescription() == null || dto.getDescription().isBlank()) {
+            throw new IllegalArgumentException("La descripción del evento es obligatoria");
+        }
+        if (dto.getDescription().length() > 500) {
+            throw new IllegalArgumentException("La descripción del evento no puede exceder los 500 caracteres");
         }
 
         Event event = modelMapper.map(dto, Event.class);
@@ -84,85 +101,52 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
 
         Event saved = eventRepository.save(event);
-
-        // auditoría manual si tu AOP no lo hace
-        // auditService.log(userId, "CREAR", "Evento creado con id: " + saved.getId(), saved.getId());
-
         return modelMapper.map(saved, EventDTO.class);
     }
 
-    // ===============================
-    // UPDATE
-    // ===============================
     @Override
     @Auditable(action = "EDITAR", entity = "EVENTO")
     public EventDTO updateEvent(Long id, EventDTO dto) {
         Long userId = getCurrentUserId();
-
         Event existing = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
-
         if (existing.getStatus() == EventStatus.CLOSED) {
             throw new IllegalStateException("No se puede editar un evento cerrado");
         }
-
         modelMapper.map(dto, existing);
         Event saved = eventRepository.save(existing);
-
-        // auditoría manual si AOP no lo hace
-        // auditService.log(userId, "EDITAR", "Evento editado con id: " + id, id);
-
         return modelMapper.map(saved, EventDTO.class);
     }
 
-    // ===============================
-    // PUBLISH
-    // ===============================
     @Override
     @Auditable(action = "PUBLICAR", entity = "EVENTO")
     public EventDTO publish(Long id) {
         Long userId = getCurrentUserId();
-
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
-
         if (event.getStatus() != EventStatus.DRAFT) {
             throw new IllegalStateException("Solo eventos en borrador pueden publicarse");
         }
-
         if (event.getStartAt() == null || event.getEndAt() == null) {
             throw new IllegalStateException("El evento debe tener fechas definidas");
         }
-
         event.setStatus(EventStatus.PUBLISHED);
         Event saved = eventRepository.save(event);
-
-        // auditService.log(userId, "PUBLICAR", "Evento publicado con id: " + id, id);
-
         return modelMapper.map(saved, EventDTO.class);
     }
 
-    // ===============================
-    // CLOSE
-    // ===============================
     @Override
     @Auditable(action = "CERRAR", entity = "EVENTO")
     public EventDTO close(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
-
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw new IllegalStateException("Solo eventos publicados pueden cerrarse");
         }
-
         event.setStatus(EventStatus.CLOSED);
         return modelMapper.map(eventRepository.save(event), EventDTO.class);
     }
 
-
-    // ===============================
-    // FIND BY ID
-    // ===============================
     @Override
     public EventDTO findById(Long id) {
         return eventRepository.findById(id)
@@ -170,9 +154,6 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
     }
 
-    // ===============================
-    // FILTERS
-    // ===============================
     @Override
     public Page<EventDTO> findFiltered(
             String status,
@@ -180,7 +161,6 @@ public class EventServiceImpl implements EventService {
             LocalDate dateFrom,
             LocalDate dateTo,
             Pageable pageable) {
-
         return eventRepository.findAll(
                 EventSpecification.filter(status, programId, dateFrom, dateTo),
                 pageable

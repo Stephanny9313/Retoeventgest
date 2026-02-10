@@ -29,6 +29,7 @@ public class EventMapper {
         if (dto == null) return null;
         Event event = new Event();
         event.setId(dto.getId());
+        event.getClient(dto.getClient());
         event.setTitle(dto.getTitle());
         event.setDescription(dto.getDescription());
         event.setStartAt(dto.getStartAt());

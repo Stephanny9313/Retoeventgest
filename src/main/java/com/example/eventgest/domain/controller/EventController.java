@@ -48,7 +48,6 @@ public class EventController {
         EventDTO published = eventService.publish(id);
         return ResponseEntity.ok(published);
     }
-
     // ===============================
     // CERRAR EVENTO
     // ===============================
@@ -57,7 +56,6 @@ public class EventController {
         EventDTO closed = eventService.close(id);
         return ResponseEntity.ok(closed);
     }
-
     // ===============================
     // OBTENER EVENTO POR ID
     // ===============================
@@ -66,7 +64,6 @@ public class EventController {
         EventDTO dto = eventService.findById(id);
         return ResponseEntity.ok(dto);
     }
-
     // ===============================
     // FILTRADO DE EVENTOS
     // ===============================
@@ -81,4 +78,6 @@ public class EventController {
         Page<EventDTO> page = eventService.findFiltered(status, programId, dateFrom, dateTo, pageable);
         return ResponseEntity.ok(page);
     }
+
+
 }
